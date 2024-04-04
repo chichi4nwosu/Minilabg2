@@ -1,0 +1,75 @@
+import java.util.LinkedList;
+import java.util.Stack;
+import java.util.Queue;
+import java.util.Scanner;
+import java.io.*;
+
+public class GraphsMiniLab2 {
+    static final int numOfVertices = 10;
+    static LinkedList[] adjList;
+
+    public static void main(String[] args) throws FileNotFoundException {
+        adjList = new LinkedList[numOfVertices];
+
+        for (int x = 0; x < numOfVertices; x++) {
+            adjList[x] = new LinkedList();
+        }
+
+        Scanner scanner = new Scanner(new File("edgesB.txt")); // Change file name as needed
+        while (scanner.hasNextLine()) {
+            String[] edge = scanner.nextLine().split(" ");
+            int vertex1 = Integer.parseInt(edge[0]);
+            int vertex2 = Integer.parseInt(edge[1]);
+            addEdge(vertex1, vertex2);
+        }
+        scanner.close();
+
+        depthFirstTraversal();
+        breadthFirstTraversal();
+    }
+
+    public static void addEdge(int vertex1, int vertex2) {
+        adjList[vertex1].add(vertex2);
+        adjList[vertex2].add(vertex1); // Uncomment if undirected graph
+    }
+
+    public static void depthFirstTraversal() {
+        boolean[] visited = new boolean[numOfVertices];
+        System.out.println("Depth First Traversal:");
+        depthFirstTraversalHelper(0, visited);
+    }
+
+    private static void depthFirstTraversalHelper(int vertex, boolean[] visited) {
+        visited[vertex] = true;
+        System.out.print(vertex + " ");
+
+        LinkedList<Integer> list = adjList[vertex];
+        for (int i : list) {
+            if (!visited[i]) {
+                depthFirstTraversalHelper(i, visited);
+            }
+        }
+    }
+
+    public static void breadthFirstTraversal() {
+        boolean[] visited = new boolean[numOfVertices];
+        Queue<Integer> queue = new LinkedList<>();
+        System.out.println("\nBreadth First Traversal:");
+
+        visited[0] = true;
+        queue.add(0);
+
+        while (!queue.isEmpty()) {
+            int vertex = queue.poll();
+            System.out.print(vertex + " ");
+
+            LinkedList<Integer> list = adjList[vertex];
+            for (int i : list) {
+                if (!visited[i]) {
+                    visited[i] = true;
+                    queue.add(i);
+                }
+            }
+        }
+    }
+}
