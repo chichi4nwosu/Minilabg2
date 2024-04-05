@@ -1,20 +1,21 @@
 import java.util.LinkedList;
-import java.util.Stack;
 import java.util.Queue;
 import java.util.Scanner;
 import java.io.*;
 
 public class GraphsMiniLab2 {
     static final int numOfVertices = 10;
-    static LinkedList[] adjList;
+    static LinkedList<Integer>[] adjList;
 
     public static void main(String[] args) throws FileNotFoundException {
         adjList = new LinkedList[numOfVertices];
 
+        // Initialize the adjacency list
         for (int x = 0; x < numOfVertices; x++) {
-            adjList[x] = new LinkedList();
+            adjList[x] = new LinkedList<Integer>();
         }
 
+        // Read edge information from the file and construct the graph
         Scanner scanner = new Scanner(new File("edgesB.txt")); // Change file name as needed
         while (scanner.hasNextLine()) {
             String[] edge = scanner.nextLine().split(" ");
@@ -24,52 +25,59 @@ public class GraphsMiniLab2 {
         }
         scanner.close();
 
+        // Perform Depth First Traversal
         depthFirstTraversal();
+
+        // Perform Breadth First Traversal
         breadthFirstTraversal();
     }
 
+    // Method to add an edge between two vertices in the adjacency list
     public static void addEdge(int vertex1, int vertex2) {
         adjList[vertex1].add(vertex2);
-        adjList[vertex2].add(vertex1); // Uncomment if undirected graph
+        adjList[vertex2].add(vertex1); // Uncomment if the graph is undirected
     }
 
+    // Depth First Traversal method
     public static void depthFirstTraversal() {
         boolean[] visited = new boolean[numOfVertices];
+        Stack<Integer> stack = new Stack<>();
         System.out.println("Depth First Traversal:");
-        depthFirstTraversalHelper(0, visited);
-    }
+        stack.push(0);
 
-    private static void depthFirstTraversalHelper(int vertex, boolean[] visited) {
-        visited[vertex] = true;
-        System.out.print(vertex + " ");
-
-        LinkedList<Integer> list = adjList[vertex];
-        for (int i : list) {
-            if (!visited[i]) {
-                depthFirstTraversalHelper(i, visited);
+        while (!stack.isEmpty()) {
+            int vertex = stack.pop();
+            if (!visited[vertex]) {
+                visited[vertex] = true;
+                System.out.print(vertex + " ");
+                for (int i : adjList[vertex]) {
+                    if (!visited[i]) {
+                        stack.push(i);
+                    }
+                }
             }
         }
+        System.out.println();
     }
 
+    // Breadth First Traversal method
     public static void breadthFirstTraversal() {
         boolean[] visited = new boolean[numOfVertices];
         Queue<Integer> queue = new LinkedList<>();
-        System.out.println("\nBreadth First Traversal:");
-
-        visited[0] = true;
+        System.out.println("Breadth First Traversal:");
         queue.add(0);
+        visited[0] = true;
 
         while (!queue.isEmpty()) {
             int vertex = queue.poll();
             System.out.print(vertex + " ");
-
-            LinkedList<Integer> list = adjList[vertex];
-            for (int i : list) {
+            for (int i : adjList[vertex]) {
                 if (!visited[i]) {
                     visited[i] = true;
                     queue.add(i);
                 }
             }
         }
+        System.out.println();
     }
 }
